@@ -10,7 +10,7 @@ import { Options, Attribute } from 'sequelize-decorators'
 export default class Contract extends Model {
     // Table Fields
     @Attribute({
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     })

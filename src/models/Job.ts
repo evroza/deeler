@@ -10,7 +10,7 @@ import { sequelize } from "@models/model";
 export default class Job extends Model {
     // Table Fields
     @Attribute({
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     })

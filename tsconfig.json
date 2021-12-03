@@ -38,7 +38,7 @@
       "@exceptions/*": ["exceptions/*"]
     }
   },
-  "include": ["src/*.ts", "src/**/*.ts", "test/*.ts", "test/**/*.ts", "src/vendor"],
+  "include": ["src/*.ts", "src/**/*.ts", "test/*.ts", "test/**/*.ts"],
   "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
   "exclude": ["node_modules/**"]
 }

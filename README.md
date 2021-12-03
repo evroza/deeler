@@ -4,8 +4,10 @@
 
 1. Copy the `.env-example` and rename to `.env`
 2. Run `npm install` to fetch dependencies
-3. Run `npm run seed` to seed database
+3. Run `npm run seed` to seed database and  run `npm start` to start the project
 4. Go ham on those APIs, see endpoints below
+
+*** see package.json for a list of other communds available when working with the project
 
 ## Possible Improvements
 Codebase could benefit from refactors and improvements such as:
@@ -18,52 +20,32 @@ Codebase could benefit from refactors and improvements such as:
 - Tests and Coverage
 - in the balances/deposit/:userId route should probably remove the :userId param - already have it passed in header
 - Caching those queries
+- Migrations
 
-## Data Models
+## Technical Notes
+- The server is running on port 3001 by default. You can change this in the `.env` file
+- To authenticate users use the `getProfile` middleware that is located under src/middleware/getProfile.js. users are authenticated by passing `profile_id` in the request header. after a user is authenticated his profile will be available under `req.profile`. make sure only users that are on the contract can access their contracts.
+- 
+### App Components
 
-> **All models are defined in src/models/**
+Laid out in respective directory by function. Important ones are
 
-### Profile
+- Models - `src/models/`
+- Controllers - `src/controllers`
+- Middleware - `src/middleware`
+
+#### Profile
 A profile can be either a `client` or a `contractor`. 
 clients create contracts with contractors. contractor does jobs for clients and get paid.
 Each profile has a balance property.
 
-### Contract
+#### Contract
 A contract between and client and a contractor.
 Contracts have 3 statuses, `new`, `in_progress`, `terminated`. contracts are considered active only when in status `in_progress`
 Contracts group jobs within them.
 
-### Job
+#### Job
 contractor get paid for jobs by clients under a certain contract.
-
-## Getting Set Up
-
-  
-The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We recommend using the LTS version.
-
-  
-
-1. Start by cloning this repository.
-
-  
-
-1. In the repo root directory, run `npm install` to gather all dependencies.
-
-  
-
-1. Next, `npm run seed` will seed the local SQLite database. **Warning: This will drop the database if it exists**. The database lives in a local file `database.sqlite3`.
-
-  
-
-1. Then run `npm start` which should start both the server and the React client.
-
-  
-  
-
-## Technical Notes
-
-- To authenticate users use the `getProfile` middleware that is located under src/middleware/getProfile.js. users are authenticated by passing `profile_id` in the request header. after a user is authenticated his profile will be available under `req.profile`. make sure only users that are on the contract can access their contracts.
-- The server is running on port 3001 by default. You can change this in the `.env` file
 
   
 
