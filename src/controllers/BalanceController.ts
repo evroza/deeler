@@ -6,7 +6,7 @@ import ActionForbiddenException from '@exceptions/ActionForbiddenException';
 import NotAuthorizedException from '@exceptions/NotAuthorizedException';
 import { sequelize } from '@models/model';
 import ServerException from '@exceptions/ServerErrorException';
-import { Op, literal } from 'sequelize';
+import { literal } from 'sequelize';
 
 
 class BalanceController implements Controller {
@@ -60,13 +60,13 @@ class BalanceController implements Controller {
               model: Job,
               as: 'Contracts',
               where: {
-                paid: {
-                  [Op.is]: null
-                }
+                paid: 0
               }
             }]
           },
         })
+
+        console.log(">>>>>>>>>>>>>>", amount, clientUnpaidTotal)
 
         if (amount > (0.25 * clientUnpaidTotal)) {
           return next(new ActionForbiddenException("Amount too big, can only deposit less than 25% of unpaid balances"));
