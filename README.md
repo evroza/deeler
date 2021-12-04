@@ -5,7 +5,7 @@
 1. Copy the `.env-example` and rename to `.env`
 2. Run `npm install` to fetch dependencies
 3. Run `npm run seed` to seed database and  
-4. run `npm run start:dev` to start the project
+4. run ***npm run start:dev*** to start the project
 5. Go ham on those APIs, see endpoints below
 
 *** see package.json for a list of other communds available when working with the project

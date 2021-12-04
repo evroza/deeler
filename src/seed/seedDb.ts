@@ -1,4 +1,3 @@
-// const { Profile, Contract, Job } = require('../models/model.js');
 import 'module-alias/register';
 import Contract from "@models/Contract";
 import Job from "@models/Job";
@@ -10,6 +9,16 @@ seed();
 
 async function seed() {
     // create tables
+    const models = {
+        Profile,
+        Contract,
+        Job
+    };
+    Object.keys(models).forEach(modelName => {
+        if (models[modelName].associate) {
+            models[modelName].associate(models);
+        }
+    })
     await Profile.sync({ force: true });
     await Contract.sync({ force: true });
     await Job.sync({ force: true });
