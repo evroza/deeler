@@ -8,7 +8,7 @@
 4. run ***npm run start:dev*** to start the project
 5. Go ham on those APIs, see endpoints below
 
-*** see package.json for a list of other communds available when working with the project
+*** see `package.json` for a list of other commands available when working with the project ***
 
 ## Possible Improvements
 Codebase could benefit from refactors and improvements such as:

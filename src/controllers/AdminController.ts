@@ -37,6 +37,7 @@ class AdminController implements Controller {
             include: {
                 model: Contract,
                 as: "Contractor",
+                attributes: ['ContractorId'],
                 required: true,
                 include: {
                     model: Job,
@@ -49,27 +50,35 @@ class AdminController implements Controller {
                         }
                     }
                 }
-            }
+            },
+            order: [[Sequelize.fn('sum', Sequelize.col('price')), 'DESC']],
+            raw: true,
         })
-        if (profiles.length == 0) return next(new EntityNotFoundException('Profile'));
-        return response.json(profiles);
+        if (profiles?.length == 0) return next(new EntityNotFoundException('Profile'));
+
+        const profile = {
+            profession: profiles[0].profession,
+            totalEarnings: profiles[0]['Contractor.Contracts.totalEarnings']
+        }
+
+        return response.json(profile);
     }
 
-     /**
-     * getBestClientsInRange Returns array of clients that paid the highest 
-     * within a range, can limit number of entities returned, default: 2
-     * @param request express request - user must pass profile_id header
-     * @param response express response
-     * @param next 
-    */
-      private async getBestClientsInRange(request: RequestWithProfile, response: Response, next: NextFunction) {
+    /**
+    * getBestClientsInRange Returns array of clients that paid the highest 
+    * within a range, can limit number of entities returned, default: 2
+    * @param request express request - user must pass profile_id header
+    * @param response express response
+    * @param next 
+   */
+    private async getBestClientsInRange(request: RequestWithProfile, response: Response, next: NextFunction) {
         const startDate = new Date(request.query.start as string);
         const endDate = new Date(request.query.end as string);
-        const {limit = 2} = request.query;
+        const { limit = 2 } = request.query;
 
-        const {  Contract, Job } = request.app.get('models');
+        const { Contract, Job } = request.app.get('models');
         const bestClients = await Job.findAll({
-            where: { paymentDate: {[Op.between]: [startDate, endDate]} },
+            where: { paymentDate: { [Op.between]: [startDate, endDate] } },
             attributes: [
                 [Sequelize.fn('sum', Sequelize.col('Job.price')), 'paid']
             ],
@@ -77,8 +86,8 @@ class AdminController implements Controller {
                 model: Contract,
                 required: true,
                 attributes: ['ClientId'],
-                include: [{ 
-                    association: 'Client', 
+                include: [{
+                    association: 'Client',
                     attributes: ['firstName', 'lastName'],
                     required: true
                 }]
@@ -90,19 +99,19 @@ class AdminController implements Controller {
             nest: true,
         });
 
-        if(!bestClients || bestClients.length == 0) {
+        if (!bestClients || bestClients.length == 0) {
             return next(new EntityNotFoundException("Profile"))
         }
 
         let output = bestClients.map(client => {
             const { paid } = client;
-            return { 
+            return {
                 id: client.Contract.ClientId,
                 fullName: `${client.Contract.Client.firstName} ${client.Contract.Client.lastName}`,
                 paid
             }
         });
-        
+
         return response.json(output);
     }
 
