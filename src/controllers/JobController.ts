@@ -48,9 +48,7 @@ class JobController implements Controller {
                 }
             },
             where: {
-                paid: {
-                    [Op.is]: null
-                },
+                paid: 0,
             }
         })
 

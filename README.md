@@ -89,5 +89,50 @@ Below is a list of the available API's for the application.
 ]
 ```
 
+# Example requests
+
+```
+
+### Get contract belonging to user
+GET  http://localhost:3001/contracts/3
+content-type: application/json
+profile_id: 6
+
+### Get all active contracts belonging to user
+GET  http://localhost:3001/contracts
+content-type: application/json
+profile_id: 3
+
+### Get all unpaid jobs for active contracts belonging to user
+GET  http://localhost:3001/jobs/unpaid
+content-type: application/json
+profile_id: 2
+
+### Client pay for a job
+### Job 5 profile 4 has insufficient balance example ;; 1,1 for one which just works, might have to reseed db
+POST  http://localhost:3001/jobs/1/pay
+content-type: application/json
+profile_id: 1
+
+### Client deposit into his account
+POST  http://localhost:3001/balances/deposit/2
+content-type: application/json
+profile_id: 2
+
+{
+    "amount": 39
+}
+
+### Get best profession within range
+GET  http://localhost:3001/admin/best-profession?start=2018-10-10&end=2023-12-12
+content-type: application/json
+profile_id: 8
+
+### Get all unpaid jobs for active contracts belonging to user
+GET  http://localhost:3001/admin/best-clients?start=2019-10-10&end=2022-12-12&limit=2
+content-type: application/json
+profile_id: 5
+```
+
   
 
