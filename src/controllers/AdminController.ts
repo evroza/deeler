@@ -16,7 +16,7 @@ class AdminController implements Controller {
 
     private initializeRoutes() {
         this.router.get(`${this.path}/best-profession`, [getProfile], this.getBestProfessionInRange);
-        this.router.get(`${this.path}/best-clients?start=<date>&end=<date>&limit=<integer>`, [getProfile], this.getBestClientsInRange);
+        this.router.get(`${this.path}/best-clients`, [getProfile], this.getBestClientsInRange);
     }
 
     /**
@@ -63,28 +63,47 @@ class AdminController implements Controller {
      * @param next 
     */
       private async getBestClientsInRange(request: RequestWithProfile, response: Response, next: NextFunction) {
-        // const startDate = new Date(request.body.start);
-        // const endDate = new Date(request.body.end);
+        const startDate = new Date(request.query.start as string);
+        const endDate = new Date(request.query.end as string);
+        const {limit = 2} = request.query;
 
-        const { Profile, Contract, Job } = request.app.get('models');
-        const profiles = await Profile.findAll({
-            group: ['profession'],
-            attributes: ['profession'],
-            include: {
+        const {  Contract, Job } = request.app.get('models');
+        const bestClients = await Job.findAll({
+            where: { paymentDate: {[Op.between]: [startDate, endDate]} },
+            attributes: [
+                [Sequelize.fn('sum', Sequelize.col('Job.price')), 'paid']
+            ],
+            include: [{
                 model: Contract,
-                as: "Contractor",
-                attributes: [],
                 required: true,
-                include: {
-                    model: Job,
-                    as: "Contracts",
-                    attributes: [[Sequelize.fn('sum', Sequelize.col('price')), 'totalEarnings']],
+                attributes: ['ClientId'],
+                include: [{ 
+                    association: 'Client', 
+                    attributes: ['firstName', 'lastName'],
                     required: true
-                }
+                }]
+            }],
+            group: ['Contract.ClientId'],
+            order: [[Sequelize.fn('sum', Sequelize.col('Job.price')), 'DESC']],
+            limit: limit,
+            raw: true,
+            nest: true,
+        });
+
+        if(!bestClients || bestClients.length == 0) {
+            return next(new EntityNotFoundException("Profile"))
+        }
+
+        let output = bestClients.map(client => {
+            const { paid } = client;
+            return { 
+                id: client.Contract.ClientId,
+                fullName: `${client.Contract.Client.firstName} ${client.Contract.Client.lastName}`,
+                paid
             }
-        })
-        if (profiles.length == 0) return next(new EntityNotFoundException('Profile'));
-        return response.json(profiles);
+        });
+        
+        return response.json(output);
     }
 
 }

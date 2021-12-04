@@ -83,8 +83,7 @@ class BalanceController implements Controller {
         depositResponse.success = true;
       });
 
-
-      return response.json(depositResponse)
+      if(!response.headersSent) return response.json(depositResponse)
     } catch (error) {
       // Transaction failed already rolled back
       return next(new ServerException(error));
